@@ -27,6 +27,8 @@ import { ProjectEditPanel } from '../ProjectEditPanel';
 import { normalizeSearchText, profileById, profileLabel } from '../helpers';
 import { CaptureTab } from './CaptureTab';
 import { WorkspaceTabs } from './components';
+import { ProjectStatusProvider } from './contexts/ProjectStatusContext';
+import { TabRouterProvider } from './contexts/TabRouterContext';
 import { EntriesTab } from './EntriesTab';
 import { OverviewTab } from './OverviewTab';
 import { PlansTab } from './PlansTab';
@@ -1381,7 +1383,18 @@ export function ProjectDetailScreen({
       item.payload.project_id === project.id,
   );
 
+  const projectStatusValue = useMemo(
+    () => ({ busy, error, notice, setBusy, setError, setNotice }),
+    [busy, error, notice],
+  );
+  const tabRouterValue = useMemo(
+    () => ({ activeTab, navigateToTab: setActiveTab }),
+    [activeTab],
+  );
+
   return (
+    <ProjectStatusProvider value={projectStatusValue}>
+      <TabRouterProvider value={tabRouterValue}>
     <Screen scroll padded refreshing={loading} onRefresh={loadDetail}>
       <AppHeader
         title={project.project_number}
@@ -1576,6 +1589,8 @@ export function ProjectDetailScreen({
         />
       ) : null}
     </Screen>
+      </TabRouterProvider>
+    </ProjectStatusProvider>
   );
 }
 
