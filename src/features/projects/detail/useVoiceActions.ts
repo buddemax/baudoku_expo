@@ -26,26 +26,22 @@ import type { Defect, DraftStatus, Project, VoiceNote } from '../../../types/pro
 import { resolveAiJob } from './ai';
 import { aiJobText } from './helpers';
 import { mergeTranscriptIntoDescription } from './transcripts';
-import type { WorkspaceTab } from './types';
+import { useProjectStatus } from './contexts/ProjectStatusContext';
+import { useTabRouter } from './contexts/TabRouterContext';
 
 export function useVoiceActions({
   audioPermissionGranted,
   audioRecorder,
   audioRecorderState,
-  busy,
   defects,
   loadDetail,
   project,
   recordedVoiceAsset,
   session,
-  setActiveTab,
   setAudioPermissionGranted,
-  setBusy,
-  setError,
-    setNotice,
-    setOutbox,
-    setPendingMedia,
-    setRecordedVoiceAsset,
+  setOutbox,
+  setPendingMedia,
+  setRecordedVoiceAsset,
   setVoiceDrafts,
   setVoiceNotes,
   setVoiceTranscript,
@@ -55,17 +51,12 @@ export function useVoiceActions({
   audioPermissionGranted: boolean | null;
   audioRecorder: ReturnType<typeof useAudioRecorder>;
   audioRecorderState: ReturnType<typeof useAudioRecorderState>;
-  busy: string | null;
   defects: Defect[];
   loadDetail: () => Promise<void>;
   project: Project;
   recordedVoiceAsset: UploadableAsset | null;
   session: Session;
-  setActiveTab: Dispatch<SetStateAction<WorkspaceTab>>;
   setAudioPermissionGranted: Dispatch<SetStateAction<boolean | null>>;
-  setBusy: Dispatch<SetStateAction<string | null>>;
-  setError: Dispatch<SetStateAction<string | null>>;
-  setNotice: Dispatch<SetStateAction<string | null>>;
   setOutbox: Dispatch<SetStateAction<OutboxItem[]>>;
   setPendingMedia: Dispatch<SetStateAction<PendingMediaItem[]>>;
   setRecordedVoiceAsset: Dispatch<SetStateAction<UploadableAsset | null>>;
@@ -75,6 +66,9 @@ export function useVoiceActions({
   voiceDrafts: Record<string, string>;
   voiceTranscript: string;
 }) {
+  const { busy, setBusy, setError, setNotice } = useProjectStatus();
+  const { navigateToTab } = useTabRouter();
+
   const ensureMicrophonePermission = async () => {
     if (audioPermissionGranted) {
       return true;
@@ -227,7 +221,7 @@ export function useVoiceActions({
       ]);
       setRecordedVoiceAsset(null);
       setVoiceTranscript('');
-      setActiveTab('entries');
+      navigateToTab('entries');
       setNotice('Sprachnotiz gespeichert. Transkription laeuft im Hintergrund.');
       if (transcript) {
         void processVoiceNoteAfterSave(voiceNote)
@@ -274,7 +268,7 @@ export function useVoiceActions({
         });
         setRecordedVoiceAsset(null);
         setVoiceTranscript('');
-        setActiveTab('entries');
+        navigateToTab('entries');
         setOutbox(await readOutbox());
         setPendingMedia(await readPendingMedia(project.id));
         setNotice('Sprachnotiz lokal gesichert und wird spaeter uebertragen.');

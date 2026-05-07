@@ -30,7 +30,9 @@ import type {
 } from '../../../types/projects';
 import { initialDefectForm, nextDefectLocalLabelFromLabels } from './helpers';
 import { VOICE_TRANSCRIPT_PENDING_DESCRIPTION } from './transcripts';
-import type { DefectFormState, WorkspaceTab } from './types';
+import type { DefectFormState } from './types';
+import { useProjectStatus } from './contexts/ProjectStatusContext';
+import { useTabRouter } from './contexts/TabRouterContext';
 
 type DefectVoiceDraft = {
   asset: UploadableAsset;
@@ -43,7 +45,6 @@ type CreateDefectOptions = {
 };
 
 export function useDefectActions({
-  busy,
   defects,
   defectForm,
   defectPhotoDrafts,
@@ -51,13 +52,9 @@ export function useDefectActions({
   project,
   recordedVoiceAsset,
   session,
-  setActiveTab,
-  setBusy,
   setDefectForm,
   setDefectPhotoDrafts,
   setDefects,
-  setError,
-  setNotice,
   setOutbox,
   setPendingMedia,
   setRecordedVoiceAsset,
@@ -67,7 +64,6 @@ export function useDefectActions({
   onVoiceNoteCreated,
   voiceTranscript,
 }: {
-  busy: string | null;
   defects: Defect[];
   defectForm: DefectFormState;
   defectPhotoDrafts: PendingMediaItem[];
@@ -75,13 +71,9 @@ export function useDefectActions({
   project: Project;
   recordedVoiceAsset: UploadableAsset | null;
   session: Session;
-  setActiveTab: Dispatch<SetStateAction<WorkspaceTab>>;
-  setBusy: Dispatch<SetStateAction<string | null>>;
   setDefectForm: Dispatch<SetStateAction<DefectFormState>>;
   setDefectPhotoDrafts: Dispatch<SetStateAction<PendingMediaItem[]>>;
   setDefects: Dispatch<SetStateAction<Defect[]>>;
-  setError: Dispatch<SetStateAction<string | null>>;
-  setNotice: Dispatch<SetStateAction<string | null>>;
   setOutbox: Dispatch<SetStateAction<OutboxItem[]>>;
   setPendingMedia: Dispatch<SetStateAction<PendingMediaItem[]>>;
   setRecordedVoiceAsset: Dispatch<SetStateAction<UploadableAsset | null>>;
@@ -91,6 +83,8 @@ export function useDefectActions({
   onVoiceNoteCreated?: (voiceNote: VoiceNote, baseDescription: string) => Promise<boolean>;
   voiceTranscript: string;
 }) {
+  const { busy, setBusy, setError, setNotice } = useProjectStatus();
+  const { navigateToTab } = useTabRouter();
   const clientOperationId = () => `${Date.now()}-${Math.random().toString(16).slice(2)}`;
   const pendingDefectId = (clientId: string) => `pending-defect:${clientId}`;
   const pendingDefectClientId = (defectId: string) =>
@@ -528,7 +522,7 @@ export function useDefectActions({
       ]);
       setSelectedDefectId(defect.id);
       if (shouldSwitchToEntries) {
-        setActiveTab('entries');
+        navigateToTab('entries');
       }
       if (shouldResetForm) {
         resetDefectForm(defect.local_label);
@@ -556,7 +550,7 @@ export function useDefectActions({
             createError,
           );
           if (shouldSwitchToEntries) {
-            setActiveTab('entries');
+            navigateToTab('entries');
           }
           return queuedDefect;
         } else {
@@ -580,7 +574,7 @@ export function useDefectActions({
           }
           setNotice('Eintrag gesichert.');
           if (shouldSwitchToEntries) {
-            setActiveTab('entries');
+            navigateToTab('entries');
           }
           return pendingDefect;
         }

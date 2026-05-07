@@ -4,6 +4,7 @@ import type { Dispatch, SetStateAction } from 'react';
 
 import { ApiError, plansApi } from '../../../lib/api';
 import { isNetworkError } from '../../../lib/api/errors';
+import { useProjectStatus } from './contexts/ProjectStatusContext';
 import {
   appendOutbox,
   cacheAssetForOffline,
@@ -24,34 +25,28 @@ const pendingDefectClientId = (defectId: string) =>
   defectId.startsWith('pending-defect:') ? defectId.replace('pending-defect:', '') : null;
 
 export function usePlanActions({
-  busy,
   loadDetail,
   onMarkerCreated,
   plans,
   project,
   selectedDefectId,
   session,
-  setBusy,
-  setError,
-  setNotice,
   setOutbox,
   setPendingMedia,
   setPlans,
 }: {
-  busy: string | null;
   loadDetail: () => Promise<void>;
   onMarkerCreated?: (defectId: string) => void;
   plans: PlanFile[];
   project: Project;
   selectedDefectId: string | null;
   session: Session;
-  setBusy: Dispatch<SetStateAction<string | null>>;
-  setError: Dispatch<SetStateAction<string | null>>;
-  setNotice: Dispatch<SetStateAction<string | null>>;
   setOutbox: Dispatch<SetStateAction<OutboxItem[]>>;
   setPendingMedia: Dispatch<SetStateAction<PendingMediaItem[]>>;
   setPlans: Dispatch<SetStateAction<PlanFile[]>>;
 }) {
+  const { busy, setBusy, setError, setNotice } = useProjectStatus();
+
   const uploadPlan = async () => {
     if (busy) {
       return;

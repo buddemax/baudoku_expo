@@ -12,36 +12,30 @@ import {
 import type { Defect, DraftStatus, MediaAsset } from '../../../types/projects';
 import { resolveAiJob } from './ai';
 import { aiJobText } from './helpers';
+import { useProjectStatus } from './contexts/ProjectStatusContext';
 
 export function useMediaActions({
-  busy,
   loadDetail,
   mediaCaptionDrafts,
   session,
-  setBusy,
-  setError,
   setMediaAiSuggestions,
   setMediaCaptionDrafts,
   setDefects,
   setPendingMedia,
-  setNotice,
   onCaptionDraftChanged,
   onCaptionSaved,
 }: {
-  busy: string | null;
   loadDetail: () => Promise<void>;
   mediaCaptionDrafts: Record<string, string>;
   session: Session;
-  setBusy: Dispatch<SetStateAction<string | null>>;
-  setError: Dispatch<SetStateAction<string | null>>;
   setMediaAiSuggestions: Dispatch<SetStateAction<Record<string, string>>>;
   setMediaCaptionDrafts: Dispatch<SetStateAction<Record<string, string>>>;
   setDefects: Dispatch<SetStateAction<Defect[]>>;
   setPendingMedia: Dispatch<SetStateAction<PendingMediaItem[]>>;
-  setNotice: Dispatch<SetStateAction<string | null>>;
   onCaptionDraftChanged?: (mediaAssetId: string) => void;
   onCaptionSaved?: (mediaAssetId: string) => void;
 }) {
+  const { busy, setBusy, setError, setNotice } = useProjectStatus();
   const clientOperationId = () => `${Date.now()}-${Math.random().toString(16).slice(2)}`;
   const pendingMediaClientId = (mediaAsset: MediaAsset) =>
     mediaAsset.storage_bucket === 'local-pending' && mediaAsset.id.startsWith('pending:')

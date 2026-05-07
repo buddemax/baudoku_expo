@@ -14,9 +14,9 @@ import type {
   ReportVersion,
 } from '../../../types/projects';
 import { sortGeneralFindings } from './helpers';
+import { useProjectStatus } from './contexts/ProjectStatusContext';
 
 export function useReportActions({
-  busy,
   conclusion,
   conclusionText,
   findingDrafts,
@@ -24,19 +24,15 @@ export function useReportActions({
   newFindingText,
   project,
   session,
-  setBusy,
   setConclusion,
   setConclusionText,
-  setError,
   setFindingDrafts,
   setGeneralFindings,
   setNewFindingText,
-  setNotice,
   setOutbox,
   setPreview,
   setVersions,
 }: {
-  busy: string | null;
   conclusion: ProjectConclusion | null;
   conclusionText: string;
   findingDrafts: Record<string, string>;
@@ -44,18 +40,16 @@ export function useReportActions({
   newFindingText: string;
   project: Project;
   session: Session;
-  setBusy: Dispatch<SetStateAction<string | null>>;
   setConclusion: Dispatch<SetStateAction<ProjectConclusion | null>>;
   setConclusionText: Dispatch<SetStateAction<string>>;
-  setError: Dispatch<SetStateAction<string | null>>;
   setFindingDrafts: Dispatch<SetStateAction<Record<string, string>>>;
   setGeneralFindings: Dispatch<SetStateAction<GeneralFinding[]>>;
   setNewFindingText: Dispatch<SetStateAction<string>>;
-  setNotice: Dispatch<SetStateAction<string | null>>;
   setOutbox: Dispatch<SetStateAction<OutboxItem[]>>;
   setPreview: Dispatch<SetStateAction<ReportPreview | null>>;
   setVersions: Dispatch<SetStateAction<ReportVersion[]>>;
 }) {
+  const { busy, setBusy, setError, setNotice } = useProjectStatus();
   const pendingFindingClientId = (findingId: string) =>
     findingId.startsWith('pending-general-finding:') ? findingId.replace('pending-general-finding:', '') : null;
   const refreshOutbox = async () => setOutbox(await readOutbox());
