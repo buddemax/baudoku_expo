@@ -28,6 +28,23 @@ export const colorsLight = {
   info: '#1F5BA6',
   infoSoft: '#E0EAF8',
 
+  // Severity ramp — derived from oklch, double-encoded with icon shape elsewhere.
+  // Designed to remain colorblind-distinguishable AND printable on B/W laser.
+  severityInfo: '#3D7DB8',
+  severityInfoSoft: '#E2ECF6',
+  severityLow: '#1E8C73',
+  severityLowSoft: '#DCF1EC',
+  severityMedium: '#B3791A',
+  severityMediumSoft: '#F8EAD2',
+  severityHigh: '#C25826',
+  severityHighSoft: '#FCE2D5',
+  severityCritical: '#A11E1E',
+  severityCriticalSoft: '#F7DBDA',
+
+  // Always-white token (replaces hardcoded #ffffff in PlansTab + VoiceInput).
+  // Maps to surface color in dark mode where appropriate.
+  alwaysWhite: '#FFFFFF',
+
   focusRing: '#1F4FB6',
   shadow: 'rgba(15, 23, 42, 0.08)',
   shadowStrong: 'rgba(15, 23, 42, 0.16)',

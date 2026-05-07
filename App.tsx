@@ -34,6 +34,7 @@ import {
 import { supabase } from './src/lib/supabase';
 import { syncOfflineQueues } from './src/lib/sync';
 import { ThemeProvider, useTheme } from './src/theme';
+import { useAppFonts } from './src/theme/fonts';
 import type { Profile, Project, Trade } from './src/types/projects';
 
 type ScreenName = 'list' | 'create' | 'detail';
@@ -59,12 +60,11 @@ const isOnlineState = (state: NetInfoState) =>
 const AUTO_SYNC_THROTTLE_MS = 10000;
 
 export default function App() {
+  const fontsLoaded = useAppFonts();
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SafeAreaProvider>
-        <ThemeProvider>
-          <AppRoot />
-        </ThemeProvider>
+        <ThemeProvider>{fontsLoaded ? <AppRoot /> : <FullscreenLoading label="App wird geladen…" />}</ThemeProvider>
       </SafeAreaProvider>
     </GestureHandlerRootView>
   );

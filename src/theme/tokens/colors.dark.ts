@@ -30,6 +30,20 @@ export const colorsDark: ColorScale = {
   info: '#7FB3FF',
   infoSoft: '#16243A',
 
+  // Severity ramp — lighter L for dark surface readability, lower C to avoid neon.
+  severityInfo: '#7FB0DA',
+  severityInfoSoft: '#1A2A38',
+  severityLow: '#52C5A8',
+  severityLowSoft: '#0F2D26',
+  severityMedium: '#E0AC58',
+  severityMediumSoft: '#3A2810',
+  severityHigh: '#E68A60',
+  severityHighSoft: '#3A1E12',
+  severityCritical: '#E36C66',
+  severityCriticalSoft: '#3A1818',
+
+  alwaysWhite: '#FFFFFF',
+
   focusRing: '#7FA7FF',
   shadow: 'rgba(0, 0, 0, 0.5)',
   shadowStrong: 'rgba(0, 0, 0, 0.7)',
