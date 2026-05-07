@@ -2,6 +2,7 @@ import type { Session } from '@supabase/supabase-js';
 import type { Dispatch, SetStateAction } from 'react';
 
 import { ApiError, conclusionsApi, generalFindingsApi, reportsApi } from '../../../lib/api';
+import { isNetworkError } from '../../../lib/api/errors';
 import { appendOutbox, createClientId, readOutbox, type OutboxItem, writeOutbox } from '../../../lib/offlineStore';
 import type {
   GeneralFinding,
@@ -55,8 +56,6 @@ export function useReportActions({
   setPreview: Dispatch<SetStateAction<ReportPreview | null>>;
   setVersions: Dispatch<SetStateAction<ReportVersion[]>>;
 }) {
-  const isNetworkError = (error: unknown): error is ApiError =>
-    error instanceof ApiError && (error.code === 'NETWORK_ERROR' || error.status === 0);
   const pendingFindingClientId = (findingId: string) =>
     findingId.startsWith('pending-general-finding:') ? findingId.replace('pending-general-finding:', '') : null;
   const refreshOutbox = async () => setOutbox(await readOutbox());

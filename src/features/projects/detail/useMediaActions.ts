@@ -2,6 +2,7 @@ import type { Session } from '@supabase/supabase-js';
 import type { Dispatch, SetStateAction } from 'react';
 
 import { aiApi, ApiError, mediaApi } from '../../../lib/api';
+import { isAiUnavailableError, isNetworkError } from '../../../lib/api/errors';
 import {
   appendOutbox,
   deletePendingMedia,
@@ -95,10 +96,7 @@ export function useMediaActions({
         setNotice('KI-Bildbeschreibung gestartet. Bitte spaeter aktualisieren.');
       }
     } catch (imageError) {
-      if (
-        imageError instanceof ApiError &&
-        (imageError.status === 503 || imageError.code?.startsWith('AI_'))
-      ) {
+      if (isAiUnavailableError(imageError)) {
         setNotice('KI-Bildbeschreibung ist nicht verfuegbar. Foto und Eintrag bleiben nutzbar.');
         return;
       }
@@ -139,7 +137,7 @@ export function useMediaActions({
       await loadDetail();
       setNotice(status === 'confirmed' ? 'Bildunterschrift bestaetigt.' : 'Bildunterschrift gespeichert.');
     } catch (captionError) {
-      if (captionError instanceof ApiError && (captionError.status === 0 || captionError.code === 'NETWORK_ERROR')) {
+      if (isNetworkError(captionError)) {
         await appendOutbox({
           client_operation_id: clientOperationId(),
           type: 'media.update',
@@ -186,7 +184,7 @@ export function useMediaActions({
       await loadDetail();
       setNotice('Foto geloescht.');
     } catch (deleteError) {
-      if (deleteError instanceof ApiError && (deleteError.status === 0 || deleteError.code === 'NETWORK_ERROR')) {
+      if (isNetworkError(deleteError)) {
         await appendOutbox({
           client_operation_id: clientOperationId(),
           type: 'media.delete',

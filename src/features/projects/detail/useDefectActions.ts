@@ -3,6 +3,7 @@ import * as ImagePicker from 'expo-image-picker';
 import type { Dispatch, SetStateAction } from 'react';
 
 import { ApiError, defectsApi, type DefectUpdateInput, voiceNotesApi } from '../../../lib/api';
+import { isNetworkError } from '../../../lib/api/errors';
 import {
   appendOutbox,
   cacheAssetForOffline,
@@ -105,9 +106,6 @@ export function useDefectActions({
       ),
     );
   };
-
-  const isNetworkError = (error: unknown): error is ApiError =>
-    error instanceof ApiError && (error.code === 'NETWORK_ERROR' || error.status === 0);
 
   const refreshOfflineState = async () => {
     const [nextOutbox, nextPendingMedia] = await Promise.all([

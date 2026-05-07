@@ -3,6 +3,7 @@ import * as DocumentPicker from 'expo-document-picker';
 import type { Dispatch, SetStateAction } from 'react';
 
 import { ApiError, plansApi } from '../../../lib/api';
+import { isNetworkError } from '../../../lib/api/errors';
 import {
   appendOutbox,
   cacheAssetForOffline,
@@ -21,9 +22,6 @@ import type { PlanFile, PlanMarker, Project } from '../../../types/projects';
 
 const pendingDefectClientId = (defectId: string) =>
   defectId.startsWith('pending-defect:') ? defectId.replace('pending-defect:', '') : null;
-
-const isNetworkError = (error: unknown): error is ApiError =>
-  error instanceof ApiError && (error.code === 'NETWORK_ERROR' || error.status === 0);
 
 export function usePlanActions({
   busy,

@@ -49,6 +49,7 @@ import {
   reportsApi,
   voiceNotesApi,
 } from '../../../lib/api';
+import { isNetworkError, isRetryableNetworkError } from '../../../lib/api/errors';
 import { formatDate, formatDateTime, getProjectTitle } from '../../../lib/formatters';
 import {
   appendOutbox,
@@ -103,19 +104,6 @@ const isAutoTranscriptionCandidate = (voiceNote: VoiceNote) => {
     ((voiceNote.transcript_status === 'suggested' || voiceNote.transcript_status === 'edited') && hasTranscript)
   );
 };
-
-const isRetryableAutoTranscriptionError = (error: unknown) =>
-  error instanceof ApiError &&
-  (error.status === 0 ||
-    error.status === 429 ||
-    error.status === 502 ||
-    error.status === 503 ||
-    error.status === 504 ||
-    error.code === 'NETWORK_ERROR' ||
-    Boolean(error.code?.startsWith('AI_')));
-
-const isNetworkError = (error: unknown): error is ApiError =>
-  error instanceof ApiError && (error.code === 'NETWORK_ERROR' || error.status === 0);
 
 const pendingDefectId = (clientId: string) => `pending-defect:${clientId}`;
 
@@ -701,7 +689,7 @@ export function ProjectDetailScreen({
         return false;
       } catch (autoError) {
         autoTranscriptionState.current[voiceNote.id] = { ...nextState, inFlight: false };
-        if (isRetryableAutoTranscriptionError(autoError)) {
+        if (isRetryableNetworkError(autoError)) {
           scheduleAutoTranscriptionRechecks(voiceNote.id);
           return false;
         }

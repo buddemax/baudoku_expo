@@ -10,6 +10,7 @@ import type { Dispatch, SetStateAction } from 'react';
 import { Platform } from 'react-native';
 
 import { aiApi, ApiError, defectsApi, voiceNotesApi } from '../../../lib/api';
+import { isNetworkError } from '../../../lib/api/errors';
 import {
   appendOutbox,
   cacheAssetForOffline,
@@ -74,9 +75,6 @@ export function useVoiceActions({
   voiceDrafts: Record<string, string>;
   voiceTranscript: string;
 }) {
-  const isNetworkError = (error: unknown): error is ApiError =>
-    error instanceof ApiError && (error.code === 'NETWORK_ERROR' || error.status === 0);
-
   const ensureMicrophonePermission = async () => {
     if (audioPermissionGranted) {
       return true;
