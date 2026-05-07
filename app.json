@@ -1,0 +1,46 @@
+{
+  "expo": {
+    "name": "BBA Baudoku",
+    "slug": "bba-baudoku",
+    "scheme": "bba-baudoku",
+    "version": "1.0.0",
+    "orientation": "default",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "automatic",
+    "newArchEnabled": true,
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "package": "com.bba.baudoku",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#ffffff"
+      },
+      "edgeToEdgeEnabled": true,
+      "predictiveBackGestureEnabled": false
+    },
+    "web": {
+      "favicon": "./assets/favicon.png",
+      "bundler": "metro",
+      "output": "single"
+    },
+    "plugins": [
+      "expo-secure-store",
+      [
+        "expo-audio",
+        {
+          "microphonePermission": "BBA Baudoku benoetigt Zugriff auf das Mikrofon, um Sprachaufnahmen fuer Feststellungen und Fazit zu speichern."
+        }
+      ],
+      "@react-native-community/datetimepicker",
+      "expo-sqlite",
+      "expo-asset"
+    ]
+  }
+}
