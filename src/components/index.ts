@@ -41,6 +41,8 @@ export { Screen } from './Screen';
 
 export { Sheet } from './Sheet';
 
+export { ConfirmProvider, useConfirm } from './ConfirmSheet';
+
 export { ListItem } from './ListItem';
 
 export { AppHeader } from './AppHeader';

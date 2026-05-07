@@ -12,6 +12,7 @@ import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import {
   AppHeader,
   Button,
+  ConfirmProvider,
   FullscreenLoading,
   Screen,
   Text,
@@ -64,7 +65,15 @@ export default function App() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SafeAreaProvider>
-        <ThemeProvider>{fontsLoaded ? <AppRoot /> : <FullscreenLoading label="App wird geladen…" />}</ThemeProvider>
+        <ThemeProvider>
+          {fontsLoaded ? (
+            <ConfirmProvider>
+              <AppRoot />
+            </ConfirmProvider>
+          ) : (
+            <FullscreenLoading label="App wird geladen…" />
+          )}
+        </ThemeProvider>
       </SafeAreaProvider>
     </GestureHandlerRootView>
   );

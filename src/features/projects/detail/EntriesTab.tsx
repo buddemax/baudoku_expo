@@ -1,7 +1,7 @@
 import type { useAudioRecorderState } from 'expo-audio';
 import { Camera, Filter as FilterIcon, Image as ImageIcon, Search, Mic } from 'lucide-react-native';
 import { useEffect, useState, type Dispatch, type SetStateAction } from 'react';
-import { Alert, View } from 'react-native';
+import { View } from 'react-native';
 
 import {
   Banner,
@@ -13,6 +13,7 @@ import {
   Sheet,
   Surface,
   Text,
+  useConfirm,
   VStack,
 } from '../../../components';
 import type { DefectUpdateInput } from '../../../lib/api';
@@ -124,6 +125,7 @@ export function EntriesTab({
   voiceTranscript: string;
 }) {
   const theme = useTheme();
+  const confirm = useConfirm();
   const [filterOpen, setFilterOpen] = useState(false);
   const [entryEditDraft, setEntryEditDraft] = useState({
     kind: 'defect' as DefectKind,
@@ -183,29 +185,34 @@ export function EntriesTab({
     });
   };
 
-  const confirmDeleteDefect = (defect: Defect) => {
-    Alert.alert(
-      'Eintrag loeschen?',
-      `${defect.local_label || defect.description.slice(0, 42)}\n\nDer Eintrag wird inklusive Zuordnungen aus der aktiven Liste entfernt.`,
-      [
-        { text: 'Abbrechen', style: 'cancel' },
-        { text: 'Loeschen', onPress: () => onDeleteDefect(defect.id), style: 'destructive' },
-      ],
-    );
+  const confirmDeleteDefect = async (defect: Defect) => {
+    const ok = await confirm({
+      title: 'Eintrag löschen?',
+      message: `${defect.local_label || defect.description.slice(0, 42)}\n\nDer Eintrag wird inklusive Zuordnungen aus der aktiven Liste entfernt.`,
+      confirmLabel: 'Löschen',
+      destructive: true,
+    });
+    if (ok) onDeleteDefect(defect.id);
   };
 
-  const confirmDeleteMedia = (mediaAsset: MediaAsset) => {
-    Alert.alert('Foto loeschen?', 'Dieses Foto wird vom Eintrag entfernt.', [
-      { text: 'Abbrechen', style: 'cancel' },
-      { text: 'Loeschen', onPress: () => onDeleteMedia(mediaAsset), style: 'destructive' },
-    ]);
+  const confirmDeleteMedia = async (mediaAsset: MediaAsset) => {
+    const ok = await confirm({
+      title: 'Foto löschen?',
+      message: 'Dieses Foto wird vom Eintrag entfernt.',
+      confirmLabel: 'Löschen',
+      destructive: true,
+    });
+    if (ok) onDeleteMedia(mediaAsset);
   };
 
-  const confirmDeleteVoiceNote = (voiceNote: VoiceNote) => {
-    Alert.alert('Sprachnotiz loeschen?', 'Diese Aufnahme und ihr Transkript werden entfernt.', [
-      { text: 'Abbrechen', style: 'cancel' },
-      { text: 'Loeschen', onPress: () => onDeleteVoiceNote(voiceNote), style: 'destructive' },
-    ]);
+  const confirmDeleteVoiceNote = async (voiceNote: VoiceNote) => {
+    const ok = await confirm({
+      title: 'Sprachnotiz löschen?',
+      message: 'Diese Aufnahme und ihr Transkript werden entfernt.',
+      confirmLabel: 'Löschen',
+      destructive: true,
+    });
+    if (ok) onDeleteVoiceNote(voiceNote);
   };
 
   return (

@@ -8,7 +8,7 @@ import {
 import * as ImagePicker from 'expo-image-picker';
 import { Pencil, Trash2 } from 'lucide-react-native';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Alert, AppState, Linking, View } from 'react-native';
+import { AppState, Linking, View } from 'react-native';
 
 import {
   AppHeader,
@@ -20,6 +20,7 @@ import {
   Screen,
   Surface,
   Text,
+  useConfirm,
   VStack,
 } from '../../../components';
 import { DetailRow } from '../../../components/ui';
@@ -169,6 +170,7 @@ export function ProjectDetailScreen({
   trades: Trade[];
 }) {
   const theme = useTheme();
+  const confirm = useConfirm();
   const [activeTab, setActiveTab] = useState<WorkspaceTab>('overview');
   const [projectEditing, setProjectEditing] = useState(false);
   const [defects, setDefects] = useState<Defect[]>([]);
@@ -1196,15 +1198,14 @@ export function ProjectDetailScreen({
     );
   };
 
-  const confirmDeleteProject = () => {
-    Alert.alert(
-      'Projekt loeschen?',
-      `${project.project_number} - ${project.client_name}\n\nDas Projekt wird aus der aktiven Liste entfernt. Diese Loeschung kann in der App nicht rueckgaengig gemacht werden.`,
-      [
-        { text: 'Abbrechen', style: 'cancel' },
-        { text: 'Loeschen', onPress: deleteProject, style: 'destructive' },
-      ],
-    );
+  const confirmDeleteProject = async () => {
+    const ok = await confirm({
+      title: 'Projekt löschen?',
+      message: `${project.project_number} – ${project.client_name}\n\nDas Projekt wird aus der aktiven Liste entfernt. Diese Löschung kann in der App nicht rückgängig gemacht werden.`,
+      confirmLabel: 'Löschen',
+      destructive: true,
+    });
+    if (ok) deleteProject();
   };
 
   const pendingDefects = useMemo<Defect[]>(() => {
