@@ -118,8 +118,8 @@ export function VoiceInput({
                 opacity: pressed ? 0.85 : 1,
               })}
             >
-              <Square color="#ffffff" size={18} fill="#ffffff" />
-              <Text variant="captionStrong" style={{ color: '#ffffff' }}>
+              <Square color={theme.colors.alwaysWhite} size={18} fill={theme.colors.alwaysWhite} />
+              <Text variant="captionStrong" style={{ color: theme.colors.alwaysWhite }}>
                 Stop
               </Text>
             </Pressable>

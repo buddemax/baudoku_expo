@@ -216,7 +216,7 @@ function MarkerTargetSelector({
             justifyContent: 'center',
           }}
         >
-          <Text variant="bodyStrong" style={{ color: selectedTarget ? '#ffffff' : theme.colors.textMuted }}>
+          <Text variant="bodyStrong" style={{ color: selectedTarget ? theme.colors.alwaysWhite : theme.colors.textMuted }}>
             {selectedTarget?.markerLabel ?? '-'}
           </Text>
         </View>
@@ -283,7 +283,7 @@ function MarkerTargetSelector({
                     justifyContent: 'center',
                   }}
                 >
-                  <Text variant="captionStrong" style={{ color: '#ffffff' }}>
+                  <Text variant="captionStrong" style={{ color: theme.colors.alwaysWhite }}>
                     {target.markerLabel}
                   </Text>
                 </View>
@@ -557,14 +557,14 @@ function PlanCard({
                           paddingHorizontal: 7,
                           borderRadius: 14,
                           borderWidth: 2,
-                          borderColor: marker.id === selectedMarkerId ? theme.colors.warning : '#ffffff',
+                          borderColor: marker.id === selectedMarkerId ? theme.colors.warning : theme.colors.alwaysWhite,
                           backgroundColor: theme.colors.danger,
                           alignItems: 'center',
                           justifyContent: 'center',
                           transform: [{ translateY: -14 }],
                         }}
                       >
-                        <Text variant="captionStrong" numberOfLines={1} adjustsFontSizeToFit style={{ color: '#ffffff' }}>
+                        <Text variant="captionStrong" numberOfLines={1} adjustsFontSizeToFit style={{ color: theme.colors.alwaysWhite }}>
                           {markerLabel(marker, index, defectById, defectFallbackLabels)}
                         </Text>
                       </View>
@@ -603,7 +603,7 @@ function PlanCard({
                     justifyContent: 'center',
                   }}
                 >
-                  <Text variant="bodyStrong" style={{ color: '#ffffff' }}>
+                  <Text variant="bodyStrong" style={{ color: theme.colors.alwaysWhite }}>
                     {markerLabel(selectedMarker, selectedMarkerIndex, defectById, defectFallbackLabels)}
                   </Text>
                 </View>
