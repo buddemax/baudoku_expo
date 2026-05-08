@@ -47,6 +47,8 @@ export { ConfirmProvider, useConfirm } from './ConfirmSheet';
 
 export { ToastProvider, useToast } from './Toast';
 
+export { SyncStatusPill } from './SyncStatusPill';
+
 export { ListItem } from './ListItem';
 
 export { AppHeader } from './AppHeader';

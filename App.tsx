@@ -5,7 +5,7 @@ import NetInfo, { type NetInfoState } from '@react-native-community/netinfo';
 import { StatusBar } from 'expo-status-bar';
 import { LogOut } from 'lucide-react-native';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { AppState, Linking } from 'react-native';
+import { AppState, Linking, View } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 
@@ -15,6 +15,7 @@ import {
   ConfirmProvider,
   FullscreenLoading,
   Screen,
+  SyncStatusPill,
   Text,
   ToastProvider,
   useToast,
@@ -349,20 +350,28 @@ function ProjectsApp({ session }: { session: Session }) {
     setScreen('list');
   }, []);
 
-  const listSubtitle =
-    networkOnline === false
-      ? transferCounts.pending || transferCounts.errors
-        ? 'Offline – Eingaben bleiben gespeichert'
-        : 'Offline – bereit zum Weiterarbeiten'
-      : autoSyncing
-        ? 'Übertragung läuft'
-        : transferCounts.errors
-          ? 'Übertragung nicht abgeschlossen'
-          : transferCounts.pending
-            ? `${transferCounts.pending} offen`
-            : lastSyncedAt
-              ? 'Alles gespeichert'
-              : 'Online';
+  const handleSyncPillPress = useCallback(() => {
+    if (transferCounts.errors > 0) {
+      toast.show({
+        tone: 'error',
+        message: `${transferCounts.errors} Übertragung(en) fehlgeschlagen. Erneut versuchen sobald online.`,
+      });
+      return;
+    }
+    if (transferCounts.pending > 0) {
+      toast.show({
+        tone: 'info',
+        message: `${transferCounts.pending} Eintrag/Einträge warten auf Übertragung.`,
+      });
+      return;
+    }
+    if (lastSyncedAt) {
+      toast.show({
+        tone: 'success',
+        message: `Zuletzt synchronisiert: ${lastSyncedAt.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' })}`,
+      });
+    }
+  }, [lastSyncedAt, toast, transferCounts.errors, transferCounts.pending]);
 
   return (
     <SafeAreaView edges={['top']} style={{ flex: 1, backgroundColor: theme.colors.background }}>
@@ -370,15 +379,24 @@ function ProjectsApp({ session }: { session: Session }) {
       {screen === 'list' ? (
         <AppHeader
           title="Projekte"
-          subtitle={listSubtitle}
           trailing={
-            <Button
-              label="Abmelden"
-              onPress={handleLogout}
-              variant="ghost"
-              size="sm"
-              leftIcon={<LogOut color={theme.colors.text} size={18} />}
-            />
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: theme.spacing[2] }}>
+              <SyncStatusPill
+                networkOnline={networkOnline}
+                autoSyncing={autoSyncing}
+                pending={transferCounts.pending}
+                errors={transferCounts.errors}
+                lastSyncedAt={lastSyncedAt}
+                onPress={handleSyncPillPress}
+              />
+              <Button
+                label="Abmelden"
+                onPress={handleLogout}
+                variant="ghost"
+                size="sm"
+                leftIcon={<LogOut color={theme.colors.text} size={18} />}
+              />
+            </View>
           }
         />
       ) : null}
