@@ -3,7 +3,7 @@ import 'react-native-gesture-handler';
 import type { Session } from '@supabase/supabase-js';
 import NetInfo, { type NetInfoState } from '@react-native-community/netinfo';
 import { StatusBar } from 'expo-status-bar';
-import { LogOut } from 'lucide-react-native';
+import { LogOut, Wrench } from 'lucide-react-native';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { AppState, Linking, View } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
@@ -25,6 +25,7 @@ import { LoginScreen, PasswordRecoveryScreen } from './src/features/auth/AuthScr
 import { ProjectCreateScreen } from './src/features/projects/ProjectCreateScreen';
 import { ProjectListScreen } from './src/features/projects/ProjectListScreen';
 import { ProjectDetailScreen } from './src/features/projects/detail/ProjectDetailScreen';
+import { StorybookScreen } from './src/features/dev/StorybookScreen';
 import { profilesApi, projectsApi, tradesApi } from './src/lib/api';
 import { isSupabaseConfigured } from './src/lib/config';
 import {
@@ -41,7 +42,7 @@ import { ThemeProvider, useTheme } from './src/theme';
 import { useAppFonts } from './src/theme/fonts';
 import type { Profile, Project, Trade } from './src/types/projects';
 
-type ScreenName = 'list' | 'create' | 'detail';
+type ScreenName = 'list' | 'create' | 'detail' | 'storybook';
 
 const recoverySessionFromUrl = (url: string): { access_token: string; refresh_token: string } | null => {
   const tokenPart = url.includes('#') ? url.split('#')[1] : url.split('?')[1];
@@ -389,6 +390,15 @@ function ProjectsApp({ session }: { session: Session }) {
                 lastSyncedAt={lastSyncedAt}
                 onPress={handleSyncPillPress}
               />
+              {__DEV__ ? (
+                <Button
+                  label="Dev"
+                  onPress={() => setScreen('storybook')}
+                  variant="ghost"
+                  size="sm"
+                  leftIcon={<Wrench color={theme.colors.text} size={18} />}
+                />
+              ) : null}
               <Button
                 label="Abmelden"
                 onPress={handleLogout}
@@ -400,6 +410,8 @@ function ProjectsApp({ session }: { session: Session }) {
           }
         />
       ) : null}
+
+      {screen === 'storybook' ? <StorybookScreen onBack={() => setScreen('list')} /> : null}
 
       {screen === 'list' ? (
         <ProjectListScreen
