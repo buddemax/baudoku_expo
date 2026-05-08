@@ -5,7 +5,7 @@ import NetInfo, { type NetInfoState } from '@react-native-community/netinfo';
 import { StatusBar } from 'expo-status-bar';
 import { LogOut } from 'lucide-react-native';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { Alert, AppState, Linking } from 'react-native';
+import { AppState, Linking } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 
@@ -16,6 +16,8 @@ import {
   FullscreenLoading,
   Screen,
   Text,
+  ToastProvider,
+  useToast,
   VStack,
 } from './src/components';
 import { LoginScreen, PasswordRecoveryScreen } from './src/features/auth/AuthScreens';
@@ -67,9 +69,11 @@ export default function App() {
       <SafeAreaProvider>
         <ThemeProvider>
           {fontsLoaded ? (
-            <ConfirmProvider>
-              <AppRoot />
-            </ConfirmProvider>
+            <ToastProvider>
+              <ConfirmProvider>
+                <AppRoot />
+              </ConfirmProvider>
+            </ToastProvider>
           ) : (
             <FullscreenLoading label="App wird geladen…" />
           )}
@@ -164,6 +168,7 @@ function ConfigMissingScreen() {
 
 function ProjectsApp({ session }: { session: Session }) {
   const theme = useTheme();
+  const toast = useToast();
   const [screen, setScreen] = useState<ScreenName>('list');
   const [projects, setProjects] = useState<Project[]>([]);
   const [profiles, setProfiles] = useState<Profile[]>([]);
@@ -314,7 +319,10 @@ function ProjectsApp({ session }: { session: Session }) {
     try {
       await clearOfflineData();
     } catch {
-      Alert.alert('Offline-Daten', 'Lokale Offline-Daten konnten nicht vollständig gelöscht werden.');
+      toast.show({
+        tone: 'warning',
+        message: 'Lokale Offline-Daten konnten nicht vollständig gelöscht werden.',
+      });
     }
     await supabase?.auth.signOut();
   };

@@ -32,6 +32,8 @@ export { Skeleton } from './Skeleton';
 
 export { Badge } from './Badge';
 export { ProjectStatusBadge } from './StatusBadge';
+export { SeverityBadge } from './SeverityBadge';
+export type { Severity } from './SeverityBadge';
 
 export { Avatar } from './Avatar';
 
@@ -42,6 +44,8 @@ export { Screen } from './Screen';
 export { Sheet } from './Sheet';
 
 export { ConfirmProvider, useConfirm } from './ConfirmSheet';
+
+export { ToastProvider, useToast } from './Toast';
 
 export { ListItem } from './ListItem';
 
